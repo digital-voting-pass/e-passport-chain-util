@@ -10,6 +10,7 @@ import binascii
 import csv
 import hashlib
 import json
+import logging
 
 import base58
 from Savoir import Savoir
@@ -24,13 +25,37 @@ def main():
     """
     Handles application workflow
     """
+    addresses = get_addresses()
+    issue_tokens(__args__.tokenname, len(addresses))
 
+
+def issue_tokens(name, amount):
+    """
+    Create a transaction which issues n assets with the given name
+    """
+
+    # Get wallet address of host
+    issue_permissions = __api__.listpermissions('issue')
+    host_wallet_address = issue_permissions[0]['address']
+    print "Host wallet address: " + host_wallet_address
+
+    # Issue assets with given amount
+    transaction = __api__.issue(host_wallet_address, name, amount, 1)
+    if not isinstance(transaction, basestring):
+        if transaction['error']['code'] == -705:
+            raise Exception('Token already issued, try a different name')
+    print str(amount) + " asset(s) of " + name + " issued, txid: " + transaction
+    return transaction
+
+def get_addresses():
+    """
+    Converts the public keys in the csv to list of addresses
+    """
+    addresses = []
     with open(__args__.pubkeys, 'rb') as csvfile:
         for row in csv.reader(csvfile, delimiter=' ', quotechar='|'):
-            print pubkey_to_address(row[0])
-
-    # api = Savoir(__rpcuser__, __rpcpasswd__, __rpchost__, __rpcport__, __chainname__)
-    # api.getinfo()
+            addresses.append(pubkey_to_address(row[0]))
+    return addresses
 
 def pubkey_to_address(pubkey):
     """
@@ -76,13 +101,21 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description='Create new elections and assign one token to every pubkey'
     )
-    parser.add_argument('--token-name', '-n', required=True)
+    parser.add_argument('--tokenname', '-n', required=True)
     parser.add_argument('--pubkeys', '-i', required=True)
     parser.add_argument('--config', '-c', required=False, default="config.json")
 
     return parser.parse_args()
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.ERROR)
     __args__ = parse_args()
     __config__ = json.load(open(__args__.config))
+    __api__ = Savoir(
+        __config__['rpcuser'],
+        __config__['rpcpasswd'],
+        __config__['rpchost'],
+        __config__['rpcport'],
+        __config__['chainname']
+    )
     main()
