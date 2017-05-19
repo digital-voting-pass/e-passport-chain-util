@@ -2,7 +2,7 @@
 
 """
 This module manages the elections on the blockchain. It creates a new
-batch of voting tokens and distributes it to the given pubkeys
+batch of voting tokens and distributes it to the given pubkeys.
 """
 
 import argparse
