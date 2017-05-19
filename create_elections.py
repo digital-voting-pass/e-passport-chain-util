@@ -27,13 +27,30 @@ def main():
     """
     addresses = get_addresses()
     issue_tokens(__args__.tokenname, len(addresses))
+    grant_permissions(addresses)
+    distribute_tokens(__args__.tokenname, addresses)
 
+def distribute_tokens(name, addresses):
+    """
+    Send every address one token
+    """
+    success = 0
+    for address in addresses:
+        if isinstance(__api__.sendasset(address, name, 1), basestring):
+            success += 1
+    print str(success) + " token(s) distributed over " + str(len(addresses)) + " address(es)"
+
+def grant_permissions(addresses):
+    """
+    Grant send and receive permissions to addresses
+    """
+    __api__.grant(", ".join(addresses), "send")
+    __api__.grant(", ".join(addresses), "receive")
 
 def issue_tokens(name, amount):
     """
     Create a transaction which issues n assets with the given name
     """
-
     # Get wallet address of host
     issue_permissions = __api__.listpermissions('issue')
     host_wallet_address = issue_permissions[0]['address']
@@ -44,7 +61,7 @@ def issue_tokens(name, amount):
     if not isinstance(transaction, basestring):
         if transaction['error']['code'] == -705:
             raise Exception('Token already issued, try a different name')
-    print str(amount) + " asset(s) of " + name + " issued, txid: " + transaction
+    print str(amount) + " token(s) of " + name + " issued"
     return transaction
 
 def get_addresses():
