@@ -1,4 +1,10 @@
-"""This module manages the elections on the blockchain"""
+#!/usr/bin/env python
+
+"""
+This module manages the elections on the blockchain. It creates a new
+batch of voting tokens and distributes it to the given pubkeys
+"""
+
 import argparse
 import binascii
 import csv
@@ -7,6 +13,12 @@ import json
 
 import base58
 from Savoir import Savoir
+
+__author__ = "Daan Middendorp"
+__copyright__ = "Copyright 2017, Digital Voting Pass"
+__credits__ = ["Wilko Meijer", "Daan Middendorp", "Jonathan Raes", "Rico Tubbing"]
+__license__ = "GPL"
+__version__ = "0.0.1"
 
 def main():
     """
