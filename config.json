@@ -1,0 +1,9 @@
+{
+  "version": ["00", "8c", "b5", "d6"],
+  "addresschecksum": "5afce7b2",
+  "rpcuser": "multichainrpc",
+  "rpcpasswd": "YoUrLoNgRpCpAsSwOrD",
+  "rpchost": "localhost",
+  "rpcport": "22335",
+  "chainname": "myChain"
+}
