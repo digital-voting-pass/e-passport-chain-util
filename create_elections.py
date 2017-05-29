@@ -71,10 +71,10 @@ def get_addresses():
     addresses = []
     with open(__args__.pubkeys, 'rb') as csvfile:
         for row in csv.reader(csvfile, delimiter=' ', quotechar='|'):
-            addresses.append(pubkey_to_address(row[0]))
+            addresses.append(pubkey_to_address(row[0], __config__))
     return addresses
 
-def pubkey_to_address(pubkey):
+def pubkey_to_address(pubkey, config):
     """
     Returns a valid address on the blockchain for pubkey
     According to http://www.multichain.com/developers/address-key-format/
@@ -90,7 +90,7 @@ def pubkey_to_address(pubkey):
     # Step 5
     pubkey160_hash_w_version = ''
     for i in range(4):
-        pubkey160_hash_w_version += __config__['version'][i] + pubkey160_hash[(i*10):(i*10)+10]
+        pubkey160_hash_w_version += config['version'][i] + pubkey160_hash[(i*10):(i*10)+10]
 
     # Step 6
     sha256_of_160hash = hashlib.sha256(binascii.unhexlify(pubkey160_hash_w_version))
@@ -103,7 +103,7 @@ def pubkey_to_address(pubkey):
     checksum = sha256_of_prev_sha256.hexdigest()[0:8]
 
     # Step 9
-    xor_checksum = '{:08x}'.format(int(int(checksum, 16) ^ int(__config__['addresschecksum'], 16)))
+    xor_checksum = '{:08x}'.format(int(int(checksum, 16) ^ int(config['addresschecksum'], 16)))
 
     # Step 10
     binary_address = pubkey160_hash_w_version + xor_checksum
