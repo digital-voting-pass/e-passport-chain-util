@@ -25,8 +25,9 @@ def main():
     """
     signing_key = SigningKey.generate(curve=BRAINPOOLP320r1)
     verifying_key = signing_key.get_verifying_key()
-    print "Address: " + pubkey_to_address(binascii.hexlify(verifying_key.to_string()), __config__)
-    print "Public: " + binascii.hexlify(verifying_key.to_string())
+    print "Address: " + pubkey_to_address(binascii.hexlify(
+        "04" + verifying_key.to_string()), __config__)
+    print "Public: 04" + binascii.hexlify(verifying_key.to_string())
     print "Private: " + binascii.hexlify(signing_key.to_string())
 
 def parse_args():
